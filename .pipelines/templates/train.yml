@@ -1,0 +1,39 @@
+jobs:
+  - job: train_model
+    displayName: Train Model
+    dependsOn: code_quality
+
+    variables:
+      - template: ./variables.yml
+
+    steps:
+      - task: AzureCLI@2
+        displayName: Install Azure ML CLI
+        inputs:
+          scriptType: bash
+          azureSubscription: $(service_connection)
+          scriptLocation: inlineScript
+          inlineScript: "az extension add -n azure-cli-ml"
+
+      - task: AzureCLI@2
+        displayName: "Train Model"
+        inputs:
+          scriptType: bash
+          azureSubscription: $(service_connection)
+          scriptLocation: inlineScript
+          inlineScript: |
+            az ml run submit-script \
+            --experiment-name $(project_name)-experiment \
+            --conda-dependencies $(dependencies_train) \
+            --target $(compute_cluster_name) \
+            --workspace-name $(workspace_name) \
+            --resource-group $(resource_group_name) \
+            --source-directory scripts \
+            --output-metadata-file run.json train.py \
+            --DATASET_NAME $(dataset_name)
+
+      - task: PublishBuildArtifacts@1
+        displayName: Publish Run Metadata Artifact
+        inputs:
+          pathToPublish: $(System.DefaultWorkingDirectory)/run.json
+          artifactName: run-metadata
