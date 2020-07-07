@@ -17,11 +17,14 @@ def init():
 
     # Parse command line arguments
     ap = ArgumentParser()
-    ap.add_argument('--model_name', dest='model_name', required=True)
+    ap.add_argument('--model_id', dest='model_id', required=True)
     args, _ = ap.parse_known_args()
 
+    # Get model name and version
+    model_name, model_version = args.model_id.split(':')
+
     # Retreive path to model folder
-    model_path = Model.get_model_path(args.model_name)
+    model_path = Model.get_model_path(model_name, version=int(model_version))
 
     # Deserialize the model file back into a sklearn model
     model = joblib.load(model_path)

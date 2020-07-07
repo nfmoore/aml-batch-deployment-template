@@ -14,3 +14,4 @@ dependencies:
   - pip=20.0.*
   - pip:
       - azureml-sdk==1.6.*
+      - azureml-dataprep[pandas, fuse]==1.6.*

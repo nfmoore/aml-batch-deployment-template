@@ -6,6 +6,12 @@ jobs:
     variables:
       - template: ./variables.yml
 
+      - name: train_run_config_file
+      - value: configuration/train.runconfig
+
+      - name: generated_run_config_file
+      - value: configuration/train_generated.runconfig
+
     steps:
       - task: AzureCLI@2
         displayName: Install Azure ML CLI
@@ -13,7 +19,30 @@ jobs:
           scriptType: bash
           azureSubscription: $(service_connection)
           scriptLocation: inlineScript
-          inlineScript: "az extension add -n azure-cli-ml"
+          inlineScript: az extension add -n azure-cli-ml
+
+      - task: AzureCLI@2
+        displayName: Attach Workspace
+        inputs:
+          scriptType: bash
+          azureSubscription: $(service_connection)
+          scriptLocation: inlineScript
+          inlineScript: |
+            az ml folder attach \
+            --workspace-name $(workspace_name) \
+            --resource-group $(resource_group_name)
+
+      - task: AzureCLI@2
+        displayName: Generate Run Configuration File
+        inputs:
+          scriptType: bash
+          azureSubscription: $(service_connection)
+          scriptLocation: inlineScript
+          inlineScript: |
+            DATASET_METADATA=$(az ml dataset show --name cardiovascular_disease_dataset | jq '.registration')
+            jq ".data.cardiovascular_disease_dataset.dataLocation.dataset |= $DATASET_METADATA" configuration/train.runconfig \
+            | jq ".target = $(compute_cluster_name)" > $(generated_run_config_file)
+            cat $(generated_run_config_file)
 
       - task: AzureCLI@2
         displayName: "Train Model"
@@ -24,13 +53,9 @@ jobs:
           inlineScript: |
             az ml run submit-script \
             --experiment-name $(project_name)-experiment \
-            --conda-dependencies $(dependencies_train) \
-            --target $(compute_cluster_name) \
-            --workspace-name $(workspace_name) \
-            --resource-group $(resource_group_name) \
-            --source-directory scripts \
-            --output-metadata-file run.json train.py \
-            --DATASET_NAME $(dataset_name)
+            --source-directory src \
+            --run-configuration-name $(generated_run_config_file)
+            --output-metadata-file run.json train.py
 
       - task: PublishBuildArtifacts@1
         displayName: Publish Run Metadata Artifact
