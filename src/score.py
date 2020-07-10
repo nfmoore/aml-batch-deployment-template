@@ -1,7 +1,9 @@
 from argparse import ArgumentParser
+from datetime import datetime
 
 import joblib
 import numpy as np
+import pandas as pd
 from azureml.core.model import Model
 
 model = None
@@ -67,16 +69,31 @@ def process_data(input_df):
     return df
 
 
-def run(input_df):
+def run(mini_batch):
     try:
-        print('input_df', type(input_df), input_df.shape)
-        # Preprocess payload and get model prediction
-        df = process_data(input_df)
-        print('X', df)
-        probability = model.predict_proba(df)
-        print('probability', probability)
-        input_df['probability'] = probability[:, 1]
-        input_df['score'] = (probability[:, 1] >= 0.5).astype(np.int)
+        print('mini_batch', mini_batch)
+
+        result_list = []
+
+        for file_path in mini_batch:
+            print('file_path', file_path)
+
+            input_df = pd.read_csv(file_path)
+
+            print('input_df', input_df.head(), input_df.shape)
+            # Preprocess payload and get model prediction
+            df = process_data(input_df)
+
+            print('X', df)
+
+            probability = model.predict_proba(df)
+
+            print('probability', probability)
+
+            input_df['probability'] = probability[:, 1]
+            input_df['score'] = (probability[:, 1] >= 0.5).astype(np.int)
+
+            result_list.append(input_df)
 
         # Log input and prediction to appinsights
         # print('Request Payload', data)
@@ -87,7 +104,13 @@ def run(input_df):
         # prediction_dc.collect(pd.DataFrame((proba[:, 1] >= 0.5).astype(int),
         #                                    columns=['cardiovascular_disease']))
 
-        return input_df
+        concat_df = pd.concat(result_list)
+
+        concat_df['score_date'] = datetime.now()
+
+        print('concat_df', concat_df.head(), concat_df.shape)
+
+        return concat_df
 
     except Exception as error:
         # Log exception to appinsights
