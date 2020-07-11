@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pandas as pd
 from tests.fixtures import data
-from tests.mocks import MockModel, MockRunContext
+from tests.mocks import MockModel
 
 from src.score import process_data, run
 
