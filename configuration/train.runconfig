@@ -21,13 +21,13 @@
     "directoriesToWatch": ["logs"]
   },
   "data": {
-    "input_dataset": {
+    "InputDataset": {
       "dataLocation": {
         "dataset": {},
         "dataPath": null
       },
       "mechanism": "Direct",
-      "environmentVariableName": "cardiovascular_disease_dataset",
+      "environmentVariableName": "InputDataset",
       "pathOnCompute": null,
       "overwrite": false
     }

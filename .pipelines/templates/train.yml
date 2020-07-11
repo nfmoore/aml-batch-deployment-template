@@ -37,7 +37,7 @@ jobs:
 
             DATASET_METADATA=$(az ml dataset show --name $(dataset_name) | jq '.registration')
 
-            jq ".data.input_dataset.dataLocation.dataset |= $DATASET_METADATA" $(train_run_config_file) | jq \
+            jq ".data.InputDataset.dataLocation.dataset |= $DATASET_METADATA" $(train_run_config_file) | jq \
             '.target |= "$(compute_cluster_name)"' > $(generated_run_config_file).runconfig
 
             cat $(generated_run_config_file).runconfig

@@ -20,7 +20,7 @@ def load_data():
         dataset = Dataset.get_by_name(workspace, name='dataset_name')
     else:
         workspace = run.experiment.workspace
-        dataset = run.input_datasets['input_dataset']
+        dataset = run.input_datasets['InputDataset']
 
     # Convert dataset to pandas dataframe
     df = dataset.to_pandas_dataframe()
