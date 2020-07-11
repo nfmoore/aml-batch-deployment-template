@@ -67,9 +67,9 @@ jobs:
           inlineScript: |
             export PIPELINE_ID=$(cat $(Pipeline.Workspace)/pipeline-metadata/pipeline.json | jq ".id" --raw-output)
 
-            az ml pipeline create-schedule
+            az ml pipeline create-schedule \
             --name $(project_name)-batch-score-schedule \
-            --pipeline-id $PIPELINE_ID
+            --pipeline-id $PIPELINE_ID \
             --experiment-name $(project_name)-batch-score-experiment \
             --schedule-yaml $(generated_schedule_config) \
             --workspace-name $(workspace_name) \

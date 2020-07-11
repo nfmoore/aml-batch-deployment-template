@@ -50,7 +50,7 @@ jobs:
             az ml run submit-script \
             --experiment-name $(project_name)-experiment \
             --source-directory $(source_directory) \
-            --run-configuration-name $(generated_run_config_file)
+            --run-configuration-name $(generated_run_config_file) \
             --output-metadata-file run.json train.py
 
       - task: PublishBuildArtifacts@1
