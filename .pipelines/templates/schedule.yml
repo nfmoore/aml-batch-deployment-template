@@ -1,0 +1,74 @@
+jobs:
+  - job: schedule_pipeline
+    displayName: Schedule Pipeline
+    dependsOn: publish_pipeline
+
+    variables:
+      - template: ./variables.yml
+
+    steps:
+      - task: AzureCLI@2
+        displayName: Install Azure ML CLI
+        inputs:
+          scriptType: bash
+          azureSubscription: $(service_connection)
+          scriptLocation: inlineScript
+          inlineScript: az extension add -n azure-cli-ml
+
+      - task: Bash@3
+        displayName: Install YAML Processor yq
+        inputs:
+          targetType: "inline"
+          script: |
+            sudo apt update
+            sudo apt install snapd
+            snap install yq
+
+      - task: DownloadBuildArtifacts@0
+        displayName: Download Model Metadata Artifact
+        inputs:
+          source: current
+          artifactName: model-metadata
+          downloadPath: $(Pipeline.Workspace)
+
+      - task: DownloadBuildArtifacts@0
+        displayName: Download Pipeline Metadata Artifact
+        inputs:
+          source: current
+          artifactName: pipeline-metadata
+          downloadPath: $(Pipeline.Workspace)
+
+      - task: Bash@3
+        displayName: Set Model ID Variable
+        inputs:
+          targetType: "inline"
+          script: |
+            export MODEL_ID=$(cat $(Pipeline.Workspace)/model-metadata/model.json | jq ".modelId" --raw-output)
+            echo '##vso[task.setvariable variable=MODEL_ID]$MODEL_ID'
+
+      - task: Bash@3
+        displayName: Generate Pipeline Configuration File
+        inputs:
+          targetType: "inline"
+          script: |
+            yq w $(schedule_config) "Schedule.pipeline_parameters.model_id" $MODEL_ID | \
+            yq w - "Schedule.datastore_name" $(schedule_datastore_name) | \
+            yq w - "Schedule.path_on_datastore" $(schedule_path_on_datastore) > $(generated_schedule_config)
+            cat $(generated_schedule_config)
+
+      - task: AzureCLI@2
+        displayName: Generate Run Configuration File
+        inputs:
+          scriptType: bash
+          azureSubscription: $(service_connection)
+          scriptLocation: inlineScript
+          inlineScript: |
+            export PIPELINE_ID=$(cat $(Pipeline.Workspace)/pipeline-metadata/pipeline.json | jq ".id" --raw-output)
+
+            az ml pipeline create-schedule
+            --name $(project_name)-batch-score-schedule \
+            --pipeline-id $PIPELINE_ID
+            --experiment-name $(project_name)-batch-score-experiment \
+            --schedule-yaml $(generated_schedule_config) \
+            --workspace-name $(workspace_name) \
+            --resource-group $(resource_group_name)

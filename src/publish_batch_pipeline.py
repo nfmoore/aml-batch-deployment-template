@@ -1,3 +1,5 @@
+import json
+import os
 from argparse import ArgumentParser
 
 from azureml.core import Datastore, Environment, Workspace
@@ -21,6 +23,7 @@ def parse_args():
     ap.add_argument('--input_dataset_name', required=True)
     ap.add_argument('--output_datastore_name', required=True)
     ap.add_argument('--environment_specification', required=True)
+    ap.add_argument('--pipeline_metadata_file', default=None)
     ap.add_argument('--environment_name', default='score_env')
     ap.add_argument('--ai_connection_string', default='')
 
@@ -96,8 +99,24 @@ def main():
         pipeline = Pipeline(workspace=workspace, steps=[score_step])
 
         # Publish pipeline
-        pipeline.publish(name=args.pipeline_name,
-                         version=args.pipeline_version)
+        published_pipeline = pipeline.publish(name=args.pipeline_name,
+                                              version=args.pipeline_version)
+        # Get pipeline details
+        pipeline_details = {'name': published_pipeline.name,
+                            'id': published_pipeline.id,
+                            'endpoint': published_pipeline.endpoint}
+
+        # Display pipeline details
+        print(pipeline_details)
+
+        if args.pipeline_metadata_file:
+            # Create directory if it does not exist
+            directory = args.pipeline_metadata_file.split('/')
+            os.makedirs('/'.join(directory[:-1]), exist_ok=True)
+
+            # Write pipeline details to file
+            with open(args.pipeline_metadata_file, 'w') as f:
+                json.dump(pipeline_details, f)
 
     except Exception as error:
         print('Exception:', error)

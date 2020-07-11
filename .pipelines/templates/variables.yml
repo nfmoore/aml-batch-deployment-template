@@ -8,36 +8,55 @@ variables:
   - name: workspace_name
     value: mlw$(environment)$(namespace)
 
+  - name: application_insights_name
+    value: ai$(environment)$(namespace)
+
   - name: project_name
     value: cardiovascular-disease
 
+  - name: source_directory
+    value: src
+
+  - name: compute_name
+    value: cpu-cluster
+
+  # TRAIN
+  - name: dataset_name
+    value: cardiovascular_disease_dataset
+
+  - name: train_run_config_file
+    value: configuration/train.runconfig
+
+  - name: generated_run_config_file
+    value: configuration/train_generated.runconfig
+
   # CONFIG
-  - name: aks_deployment_config
-    value: config/aks_deployment_config.yml
+  - name: schedule_config
+    value: configuration/schedule_config.yml
 
-  - name: aci_deployment_config
-    value: config/aci_deployment_config.yml
-
-  - name: inference_config
-    value: config/inference_config.yml
+  - name: generated_schedule_config
+    value: configuration/generated_schedule_config.yml
 
   # ENVIRONMENTS
-  - name: dependencies_train
-    value: environments/conda_dependencies_train.yml
-
   - name: dependencies_score
     value: environments/conda_dependencies_score.yml
 
   - name: dependencies_test
     value: environments/dependencies_test.txt
 
-  # TRAIN
-  - name: dataset_name
-    value: cardiovascular_disease_dataset
+  # PUBLISH
+  - name: pipeline_endpoint_name
+    value: cardiovascular-disease-batch-score
 
-  # DEPLOY
-  - name: aci_service_endpoint_name
-    value: cardiovascular-disease-aci
+  - name: input_dataset_name
+    value: batch_score_inputs
 
-  - name: aks_service_endpoint_name
-    value: cardiovascular-disease-aks
+  - name: output_datastore_name
+    value: batch_score_outputs
+
+  # SCHEDULE
+  - name: schedule_datastore_name
+    value: batch_score
+
+  - name: schedule_path_on_datastore
+    value: inputs

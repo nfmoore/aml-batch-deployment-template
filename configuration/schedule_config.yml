@@ -2,7 +2,7 @@ Schedule:
   description: "Change-Based Schedule"
   recurrence: ~
   pipeline_parameters:
-    model_id: cardiovascular-disease-model:5
+    model_id: cardiovascular-disease-model:1
   wait_for_provisioning: True
   wait_timeout: 3600
   datastore_name: "batch_score"
