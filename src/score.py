@@ -88,7 +88,7 @@ def run(mini_batch):
             # Preprocess payload and get model prediction
             df = process_data(input_df)
             probability = model.predict_proba(df)
-            print('probability', probability)
+
             # Add prediction and confidence level to input data as columns
             input_df['probability'] = probability[:, 1]
             input_df['score'] = (probability[:, 1] >= 0.5).astype(np.int)
