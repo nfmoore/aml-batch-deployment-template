@@ -22,6 +22,7 @@ def parse_args():
     ap.add_argument('--output_datastore_name', required=True)
     ap.add_argument('--environment_specification', required=True)
     ap.add_argument('--environment_name', default='score_env')
+    ap.add_argument('--ai_connection_string', default='')
 
     args, _ = ap.parse_known_args()
     return args
@@ -44,6 +45,11 @@ def main():
         environment = Environment.from_conda_specification(
             name=args.environment_name,
             file_path=args.environment_specification)
+
+        # Add environment variables
+        environment.environment_variables = {
+            'APPLICATIONINSIGHTS_CONNECTION_STRING': args.ai_connection_string
+        }
 
         # Retreive input dataset
         input_dataset = Dataset.get_by_name(

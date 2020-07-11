@@ -15,3 +15,4 @@ dependencies:
       - azureml-sdk==1.6.*
       - azureml-defaults==1.6.*
       - azureml-pipeline-steps==1.6.*
+      - opencensus-ext-azure==1.0.*

@@ -1,21 +1,19 @@
+import logging
 from argparse import ArgumentParser
 from datetime import datetime
 
 import joblib
 import numpy as np
 import pandas as pd
+from azureml.core import Run
 from azureml.core.model import Model
+from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 model = None
-# inputs_dc = None
-# prediction_dc = None
 
 
 def init():
-    # from azureml.monitoring import ModelDataCollector
-
     global model
-    global inputs_dc, prediction_dc
 
     # Parse command line arguments
     ap = ArgumentParser()
@@ -30,18 +28,6 @@ def init():
 
     # Deserialize the model file back into a sklearn model
     model = joblib.load(model_path)
-
-    # Initialize data collectors
-    # inputs_dc = ModelDataCollector(
-    #     model_name='cardiovascular_disease_model',
-    #     designation='inputs',
-    #     feature_names=['age', 'gender', 'systolic', 'diastolic', 'height',
-    #                    'weight', 'cholesterol', 'glucose', 'smoker',
-    #                    'alcoholic', 'active'])
-    # prediction_dc = ModelDataCollector(
-    #     model_name="cardiovascular_disease_model",
-    #     designation='predictions',
-    #     feature_names=['cardiovascular_disease'])
 
 
 def process_data(input_df):
@@ -70,51 +56,59 @@ def process_data(input_df):
 
 
 def run(mini_batch):
-    try:
-        print('mini_batch', mini_batch)
 
+    # Add the app insights logger to the python logger
+    logger = logging.getLogger(__name__)
+    logger.addHandler(AzureLogHandler())
+
+    # Get run context
+    run = Run.get_context()
+
+    # Get pipeline information
+    custom_dimensions = {
+        'parent_run_id': run.parent.id,
+        'step_id': run.id,
+        'step_name': run.name,
+        'experiment_name': run.experiment.name,
+        'run_url': run.parent.get_portal_url(),
+        'run_time': datetime.now(),
+        'mini_batch': mini_batch
+    }
+
+    # Log pipeline information
+    logger.info('Pipeline information', custom_dimensions)
+
+    try:
         result_list = []
 
         for file_path in mini_batch:
-            print('file_path', file_path)
 
+            # Read file
             input_df = pd.read_csv(file_path)
 
-            print('input_df', input_df.head(), input_df.shape)
             # Preprocess payload and get model prediction
             df = process_data(input_df)
-
-            print('X', df)
-
             probability = model.predict_proba(df)
 
-            print('probability', probability)
-
+            # Add prediction and confidence level to input data as columns
             input_df['probability'] = probability[:, 1]
             input_df['score'] = (probability[:, 1] >= 0.5).astype(np.int)
 
+            # Add scored data from file to list
             result_list.append(input_df)
 
-        # Log input and prediction to appinsights
-        # print('Request Payload', data)
-        # print('Response Payload', result)
-
-        # Collect features and prediction data
-        # inputs_dc.collect(input_df)
-        # prediction_dc.collect(pd.DataFrame((proba[:, 1] >= 0.5).astype(int),
-        #                                    columns=['cardiovascular_disease']))
-
+        # Create a single dataframe from scored data and add datetime column
         concat_df = pd.concat(result_list)
-
         concat_df['score_date'] = datetime.now()
 
-        print('concat_df', concat_df.head(), concat_df.shape)
+        # Log metrics to appinsights
+        logger.info('Pipeline scored records', concat_df.shape[0])
 
         return concat_df
 
     except Exception as error:
         # Log exception to appinsights
-        # print('Error', str(e))
+        logger.error('Pipeline exception', str(error))
 
         # Retern exception
         return str(error)

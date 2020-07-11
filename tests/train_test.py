@@ -3,15 +3,15 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pandas as pd
 from sklearn.pipeline import Pipeline
-
-from scripts.train import load_data, main, preprocess_data, train_model
 from tests.unit.fixtures import cv_results, data
 from tests.unit.mocks import MockDataset, MockRunContext, MockWorkspace
 
+from src.train import load_data, main, preprocess_data, train_model
 
-@patch('scripts.train.run', MockRunContext())
-@patch('scripts.train.Workspace', MockWorkspace())
-@patch('scripts.train.Dataset', MockDataset())
+
+@patch('src.train.run', MockRunContext())
+@patch('src.train.Workspace', MockWorkspace())
+@patch('src.train.Dataset', MockDataset())
 def test_load_data():
     # Define target dataframe and returned dataframe after loading data
     target_df = pd.DataFrame(data.copy())
@@ -24,7 +24,7 @@ def test_load_data():
     assert set(return_df.columns) == set(target_df.columns)
 
 
-@patch('scripts.train.run', MockRunContext())
+@patch('src.train.run', MockRunContext())
 def test_preprocess_data():
     # Return dataframe after processing data
     input_df = pd.DataFrame(data.copy())
@@ -37,7 +37,7 @@ def test_preprocess_data():
     assert 'bmi' in df.columns.tolist()
 
 
-@patch('scripts.train.run', MockRunContext())
+@patch('src.train.run', MockRunContext())
 def test_preprocess_data_nulls():
     # Create dataset with additional record with null
     data_with_null = data.copy()
@@ -56,7 +56,7 @@ def test_preprocess_data_nulls():
     assert 'bmi' in df.columns.tolist()
 
 
-@patch('scripts.train.run', MockRunContext())
+@patch('src.train.run', MockRunContext())
 def test_preprocess_data_duplicates():
     # Create dataset with additional duplicate record
     data_with_dup = data.copy()
@@ -73,8 +73,8 @@ def test_preprocess_data_duplicates():
     assert 'bmi' in df.columns.tolist()
 
 
-@patch('scripts.train.run', MockRunContext())
-@patch('scripts.train.cross_validate')
+@patch('src.train.run', MockRunContext())
+@patch('src.train.cross_validate')
 def test_train_model(mock_cross_validate):
     # Mock retuirn value of cross_validate
     mock_cross_validate.return_value = cv_results
@@ -88,12 +88,12 @@ def test_train_model(mock_cross_validate):
     assert type(model) == Pipeline
 
 
-@patch('scripts.train.run', MockRunContext())
-@patch('scripts.train.parse_args')
-@patch('scripts.train.load_data')
-@patch('scripts.train.cross_validate')
-@patch('scripts.train.os.makedirs', MagicMock())
-@patch('scripts.train.joblib.dump')
+@patch('src.train.run', MockRunContext())
+@patch('src.train.parse_args')
+@patch('src.train.load_data')
+@patch('src.train.cross_validate')
+@patch('src.train.os.makedirs', MagicMock())
+@patch('src.train.joblib.dump')
 def test_main(mock_dump, mock_cross_validate, mock_load_data, mock_parse_args):
     # Mock retuirn values
     mock_parse_args.return_value = 'dataset_name'
