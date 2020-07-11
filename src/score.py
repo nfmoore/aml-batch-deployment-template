@@ -92,7 +92,7 @@ def run(mini_batch):
             # Add prediction and confidence level to input data as columns
             input_df['probability'] = probability[:, 1]
             input_df['score'] = (probability[:, 1] >= 0.5).astype(np.int)
-            print('input_df', input_df.head())
+
             # Add scored data from file to list
             result_list.append(input_df)
 
