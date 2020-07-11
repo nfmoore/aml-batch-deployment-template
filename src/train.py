@@ -118,7 +118,7 @@ def main():
         joblib.dump(value=model, filename='./outputs/model.pkl')
 
     except Exception as e:
-        print(e)
+        print('Exception:', e)
 
 
 if __name__ == "__main__":
