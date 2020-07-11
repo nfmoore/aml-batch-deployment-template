@@ -1,14 +1,20 @@
 import numpy as np
 import pandas as pd
-
-from tests.unit.fixtures import data
+from tests.fixtures import data
 
 
 class MockModel:
 
     @staticmethod
     def predict_proba(X):
-        return np.array([[0.7581071779416333, 0.24189282205836665]])
+        return np.array([[0.7581071779416333, 0.24189282205836665],
+                         [0.7581071779416333, 0.24189282205836665],
+                         [0.7581071779416333, 0.24189282205836665],
+                         [0.7581071779416333, 0.24189282205836665],
+                         [0.7581071779416333, 0.24189282205836665],
+                         [0.7581071779416333, 0.24189282205836665],
+                         [0.7581071779416333, 0.24189282205836665],
+                         [0.7581071779416333, 0.24189282205836665]])
 
 
 class MockPandasDataFrameDataset:

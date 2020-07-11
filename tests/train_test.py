@@ -3,8 +3,8 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pandas as pd
 from sklearn.pipeline import Pipeline
-from tests.unit.fixtures import cv_results, data
-from tests.unit.mocks import MockDataset, MockRunContext, MockWorkspace
+from tests.fixtures import cv_results, data
+from tests.mocks import MockDataset, MockRunContext, MockWorkspace
 
 from src.train import load_data, main, preprocess_data, train_model
 
@@ -15,7 +15,7 @@ from src.train import load_data, main, preprocess_data, train_model
 def test_load_data():
     # Define target dataframe and returned dataframe after loading data
     target_df = pd.DataFrame(data.copy())
-    return_df = load_data(None)
+    return_df = load_data()
 
     # Should return desired number of columns
     assert len(return_df.columns) == len(target_df.columns)
@@ -88,15 +88,13 @@ def test_train_model(mock_cross_validate):
     assert type(model) == Pipeline
 
 
-@patch('src.train.run', MockRunContext())
-@patch('src.train.parse_args')
+@patch('src.train.Run', MagicMock())
 @patch('src.train.load_data')
 @patch('src.train.cross_validate')
 @patch('src.train.os.makedirs', MagicMock())
 @patch('src.train.joblib.dump')
-def test_main(mock_dump, mock_cross_validate, mock_load_data, mock_parse_args):
+def test_main(mock_dump, mock_cross_validate, mock_load_data):
     # Mock retuirn values
-    mock_parse_args.return_value = 'dataset_name'
     mock_cross_validate.return_value = cv_results
     mock_load_data.return_value = pd.DataFrame(data.copy())
 

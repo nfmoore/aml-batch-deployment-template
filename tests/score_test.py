@@ -1,26 +1,28 @@
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
-from tests.unit.fixtures import data
-from tests.unit.mocks import MockModel
+from tests.fixtures import data
+from tests.mocks import MockModel, MockRunContext
 
 from src.score import process_data, run
 
 
 def test_process_data():
     # Generate payload
-    payload = data[0]
-    payload.pop('cardiovascular_disease', None)
+    payload = data.copy()
 
     # Apply preprocessing
-    input_df = pd.DataFrame([payload])
+    input_df = pd.DataFrame(payload)
+    input_df.drop('cardiovascular_disease', axis=1, inplace=True)
     X = process_data(input_df)
 
     # Calculate BMI value
-    payload_bmi = payload['weight'] / (payload['height'] / 100) ** 2
+    payload_bmi = input_df.iloc[0]['weight'] / \
+        (input_df.iloc[0]['height'] / 100) ** 2
 
     # Should return a dataframe with 1 row and 10 columns
-    assert X.shape == (1, 10)
+    print('X.columns', X.columns)
+    assert X.shape == (input_df.shape[0], 10)
 
     # Should include column for BMI
     assert 'bmi' in X.columns.tolist()
@@ -34,19 +36,21 @@ def test_process_data():
 
 
 @patch('src.score.model', MockModel())
-def test_run():
-    # Generate payload
-    payload = data[0]
-    payload.pop('cardiovascular_disease', None)
+@patch('src.score.logging', MagicMock())
+@patch('src.score.AzureLogHandler', MagicMock())
+@patch('src.score.Run.get_context', MagicMock())
+@patch('src.score.pd.read_csv')
+def test_run(mock_pd_read_csv):
+    # Generate mini_batch
+    mini_batch = pd.DataFrame(data.copy())
+    mini_batch.drop('cardiovascular_disease', axis=1, inplace=True)
+    mock_pd_read_csv.return_value = mini_batch
 
     # Return prediction
-    result = run([payload])
-    prediction_probabilities = [0.24189282205836665]
-
-    # Should return a dictionary
-    assert type(result) == dict
-
+    result = run([mini_batch])
+    print('result', result)
     # Should return valid response payload
-    assert 'probability' in result.keys()
-    assert type(result['probability']) == list
-    assert result['probability'] == prediction_probabilities
+    assert 'probability' in result.columns
+    assert 'score' in result.columns
+    assert 'score_date' in result.columns
+    assert type(result) == type(mini_batch)

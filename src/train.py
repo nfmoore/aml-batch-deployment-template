@@ -15,8 +15,6 @@ run = None
 
 def load_data():
     # Retreive dataset
-    print('run.input_datasets', run.input_datasets)
-
     if run._run_id.startswith('OfflineRun'):
         workspace = Workspace.from_config()
         dataset = Dataset.get_by_name(workspace, name='dataset_name')
