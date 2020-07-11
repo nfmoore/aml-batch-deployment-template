@@ -39,6 +39,7 @@ jobs:
             jq ".data.$(dataset_name).dataLocation.dataset |= $DATASET_METADATA" $(train_run_config_file) | jq \
             '.target |= "$(compute_cluster_name)"' > $(generated_run_config_file)
             cat $(generated_run_config_file)
+            jq ".data.$(dataset_name).dataLocation.dataset |= $DATASET_METADATA" $(train_run_config_file)
 
       - task: AzureCLI@2
         displayName: "Train Model"
