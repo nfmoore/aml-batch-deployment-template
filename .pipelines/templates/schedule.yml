@@ -51,6 +51,8 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
+            set -e
+
             yq w $(schedule_config) "Schedule.pipeline_parameters.model_id" $MODEL_ID | \
             yq w - "Schedule.datastore_name" $(schedule_datastore_name) | \
             yq w - "Schedule.path_on_datastore" $(schedule_path_on_datastore) > $(generated_schedule_config)

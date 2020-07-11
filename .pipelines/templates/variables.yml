@@ -28,7 +28,7 @@ variables:
     value: configuration/train.runconfig
 
   - name: generated_run_config_file
-    value: configuration/train_generated.runconfig
+    value: configuration/train_generated
 
   # CONFIG
   - name: schedule_config
