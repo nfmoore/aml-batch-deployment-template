@@ -34,6 +34,9 @@ jobs:
           scriptLocation: inlineScript
           inlineScript: |
             DATASET_METADATA=$(az ml dataset show --name $(dataset_name) | jq '.registration')
+            echo jq ".data.$(dataset_name).dataLocation.dataset |= $DATASET_METADATA" $(train_run_config_file) \
+            | jq ".target |= $(compute_cluster_name)" > $(generated_run_config_file)
+
             jq ".data.$(dataset_name).dataLocation.dataset |= $DATASET_METADATA" $(train_run_config_file) \
             | jq ".target |= $(compute_cluster_name)" > $(generated_run_config_file)
             cat $(generated_run_config_file)
