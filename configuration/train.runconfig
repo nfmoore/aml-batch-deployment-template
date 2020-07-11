@@ -21,7 +21,7 @@
     "directoriesToWatch": ["logs"]
   },
   "data": {
-    "cardiovascular_disease_dataset": {
+    "input_dataset": {
       "dataLocation": {
         "dataset": {},
         "dataPath": null
