@@ -102,6 +102,7 @@ def main():
         # Publish pipeline
         published_pipeline = pipeline.publish(name=args.pipeline_name,
                                               version=args.pipeline_version)
+
         # Get pipeline details
         pipeline_details = {'name': published_pipeline.name,
                             'id': published_pipeline.id,
