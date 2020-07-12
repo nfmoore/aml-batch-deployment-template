@@ -37,12 +37,14 @@ def main():
     try:
         args = parse_args()
 
+        print('args', args, args.subscription_id,
+              args.resource_group, args.workspace_name)
+
         # Retreive workspace
         workspace = Workspace.get(
             subscription_id=args.subscription_id,
             resource_group=args.resource_group,
-            name=args.workspace_name,
-            auth=MsiAuthentication())
+            name=args.workspace_name)
 
         # Retreive compute cluster
         compute_target = workspace.compute_targets[args.compute_name]
