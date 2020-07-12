@@ -14,7 +14,7 @@ def parse_args():
     # Parse command line arguments
     ap = ArgumentParser()
 
-    ap.add_argument('--subscription_id', required=True)
+    # ap.add_argument('--subscription_id', required=True)
     ap.add_argument('--resource_group', required=True)
     ap.add_argument('--workspace_name', required=True)
     ap.add_argument('--compute_name', required=True)
