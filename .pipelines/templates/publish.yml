@@ -60,8 +60,6 @@ jobs:
             --ai_connection_string $APPLICATION_INSIGHTS_CONNECTION_STRING \
             --pipeline_metadata_file pipeline.json
 
-            ls
-
       - task: PublishBuildArtifacts@1
         displayName: Publish Pipeline Metadata Artifact
         inputs:
