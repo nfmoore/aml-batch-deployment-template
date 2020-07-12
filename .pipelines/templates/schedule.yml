@@ -1,7 +1,7 @@
 jobs:
   - job: schedule_pipeline
     displayName: Schedule Pipeline
-    # dependsOn: publish_pipeline
+    dependsOn: publish_pipeline
 
     variables:
       - template: ./variables.yml
