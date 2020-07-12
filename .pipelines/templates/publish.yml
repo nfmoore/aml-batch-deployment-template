@@ -80,7 +80,7 @@ jobs:
             --workspace_name $(workspace_name) \
             --compute_name $(compute_name) \
             --environment_specification $(dependencies_score) \
-            --model_id $MODEL_ID \
+            --model_id MODEL_ID \
             --pipeline_name $(pipeline_endpoint_name) \
             --pipeline_version $(Build.BuildId) \
             --input_dataset_name $(input_dataset_name) \
