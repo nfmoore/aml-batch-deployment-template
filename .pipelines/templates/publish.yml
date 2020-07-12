@@ -61,7 +61,7 @@ jobs:
           azureSubscription: $(service_connection)
           scriptLocation: inlineScript
           inlineScript: |
-            python3 src.publish_batch_pipeline \
+            python3 -m src.publish_batch_pipeline \
             --subscription_id $SUBSCRIPTION_ID \
             --resource_group $(resource_group_name) \
             --workspace_name $(workspace_name) \
