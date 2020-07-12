@@ -27,7 +27,6 @@ def parse_args():
     ap.add_argument('--pipeline_metadata_file', default=None)
     ap.add_argument('--environment_name', default='score_env')
     ap.add_argument('--ai_connection_string', default='')
-    ap.add_argument('--msi_auth', default=False)
 
     args, _ = ap.parse_known_args()
     return args
