@@ -38,7 +38,9 @@ def main():
 
         # Retreive workspace
         print(args.subscription_id, args.resource_group, args.workspace_name)
-        print(os.environ)
+
+        for env in os.environ:
+            print(env, os.environ[env])
 
         workspace = Workspace.get(
             subscription_id=args.subscription_id,
