@@ -18,12 +18,12 @@ jobs:
           script: |
             pip3 install -r $(dependencies_test)
 
-      - task: DownloadBuildArtifacts@0
-        displayName: Download Model Metadata Artifact
-        inputs:
-          source: current
-          artifactName: model-metadata
-          downloadPath: $(Pipeline.Workspace)
+      # - task: DownloadBuildArtifacts@0
+      #   displayName: Download Model Metadata Artifact
+      #   inputs:
+      #     source: current
+      #     artifactName: model-metadata
+      #     downloadPath: $(Pipeline.Workspace)
 
       - task: Bash@3
         displayName: Set Subscription ID Variable
@@ -66,13 +66,13 @@ jobs:
               --workspace_name $(workspace_name) \
               --compute_name $(compute_name) \
               --environment_specification $(dependencies_score) \
-              --model_id $MODEL_ID \
-              --pipeline_name $(pipeline_endpoint_name) \
+              --model_id cvdm \
+              --pipeline_name endpoint-name \
               --pipeline_version $(Build.BuildId) \
-              --input_dataset_name $(input_dataset_name) \
-              --output_datastore_name $(output_datastore_name) \
+              --input_dataset_name input \
+              --output_datastore_name output \
               --ai_connection_string $APPLICATION_INSIGHTS_CONNECTION_STRING \
-              --pipeline_metadata_file $(Pipeline.Workspace)/pipeline-metadata/pipeline.json
+              --pipeline_metadata_file asd
 
       - task: PublishBuildArtifacts@1
         displayName: Publish Pipeline Metadata Artifact
