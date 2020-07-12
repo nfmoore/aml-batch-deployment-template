@@ -3,8 +3,7 @@ import os
 from argparse import ArgumentParser
 
 from azureml.core import Datastore, Environment, Workspace
-from azureml.core.authentication import (MsiAuthentication,
-                                         ServicePrincipalAuthentication)
+from azureml.core.authentication import MsiAuthentication
 from azureml.core.dataset import Dataset
 from azureml.data.dataset_consumption_config import DatasetConsumptionConfig
 from azureml.pipeline.core import Pipeline, PipelineData, PipelineParameter
@@ -39,18 +38,11 @@ def main():
         args = parse_args()
 
         # Retreive workspace
-        if args.msi_auth:
-            print('msi_auth')
-            workspace = Workspace.get(
-                subscription_id=args.subscription_id,
-                resource_group=args.resource_group,
-                name=args.workspace_name,
-                auth=MsiAuthentication())
-        else:
-            workspace = Workspace.get(
-                subscription_id=args.subscription_id,
-                resource_group=args.resource_group,
-                name=args.workspace_name)
+        workspace = Workspace.get(
+            subscription_id=args.subscription_id,
+            resource_group=args.resource_group,
+            name=args.workspace_name,
+            auth=MsiAuthentication())
 
         # Retreive compute cluster
         compute_target = workspace.compute_targets[args.compute_name]
