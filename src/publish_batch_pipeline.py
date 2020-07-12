@@ -3,7 +3,6 @@ import os
 from argparse import ArgumentParser
 
 from azureml.core import Datastore, Environment, Workspace
-from azureml.core.authentication import ServicePrincipalAuthentication
 from azureml.core.dataset import Dataset
 from azureml.data.dataset_consumption_config import DatasetConsumptionConfig
 from azureml.pipeline.core import Pipeline, PipelineData, PipelineParameter
