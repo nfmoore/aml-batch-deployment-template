@@ -38,20 +38,20 @@ def main():
         args = parse_args()
 
         # Retreive workspace
-        if args.service_connection:
-            service_principal = ServicePrincipalAuthentication(
-                tenant_id="my-tenant-id",
-                service_principal_id="my-application-id",
-                service_principal_password="svc_pr_password")
+        # if args.service_connection:
+        #     service_principal = ServicePrincipalAuthentication(
+        #         tenant_id="my-tenant-id",
+        #         service_principal_id="my-application-id",
+        #         service_principal_password="svc_pr_password")
 
-            workspace = Workspace.get(
-                resource_group=args.resource_group,
-                name=args.workspace_name,
-                auth=service_principal)
-        else:
-            workspace = Workspace.get(
-                resource_group=args.resource_group,
-                name=args.workspace_name)
+        #     workspace = Workspace.get(
+        #         resource_group=args.resource_group,
+        #         name=args.workspace_name,
+        #         auth=service_principal)
+        # else:
+        workspace = Workspace.get(
+            resource_group=args.resource_group,
+            name=args.workspace_name)
 
         # Retreive compute cluster
         compute_target = workspace.compute_targets[args.compute_name]
