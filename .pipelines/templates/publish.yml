@@ -32,16 +32,20 @@ jobs:
           azureSubscription: $(service_connection)
           scriptLocation: inlineScript
           inlineScript: |
+            # Get subscription id
             export SUBSCRIPTION_ID=$(az account show | jq ".id" --raw-output)
 
+            # Get model id from model metadata artifiact
             export MODEL_ID=$(cat $(Pipeline.Workspace)/model-metadata/model.json | jq ".modelId" --raw-output)
 
+            # Get application insights connection string
             export APPLICATION_INSIGHTS_CONNECTION_STRING=$(az resource show \
             --resource-group $(resource_group_name) \
             --name $(application_insights_name) \
             --resource-type Microsoft.Insights/components \
             | jq ".properties.ConnectionString" --raw-output)
 
+            # Run script to publish pipeline
             python3 src/publish_batch_pipeline.py \
             --subscription_id $SUBSCRIPTION_ID \
             --resource_group $(resource_group_name) \

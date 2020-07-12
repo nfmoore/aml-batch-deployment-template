@@ -43,11 +43,15 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
+            # Fail script on error
             set -e
 
+            # Update details of the model id, datastore and path on schedule config file
             yq w $(schedule_config) "Schedule.pipeline_parameters.model_id" $MODEL_ID | \
             yq w - "Schedule.datastore_name" $(schedule_datastore_name) | \
             yq w - "Schedule.path_on_datastore" $(schedule_path_on_datastore) > $(generated_schedule_config)
+
+            # Display details of schedule config file
             cat $(generated_schedule_config)
 
       - task: AzureCLI@2
@@ -57,9 +61,13 @@ jobs:
           azureSubscription: $(service_connection)
           scriptLocation: inlineScript
           inlineScript: |
+            # Get model id from model metadata artifiact
             export MODEL_ID=$(cat $(Pipeline.Workspace)/model-metadata/model.json | jq ".modelId" --raw-output)
+
+            # Get pipeline id from model metadata artifiact
             export PIPELINE_ID=$(cat $(Pipeline.Workspace)/pipeline-metadata/pipeline.json | jq ".id" --raw-output)
 
+            # Create a change-based schedule to trigger pipeline
             az ml pipeline create-schedule \
             --name $(project_name)-batch-score-schedule \
             --pipeline-id $PIPELINE_ID \

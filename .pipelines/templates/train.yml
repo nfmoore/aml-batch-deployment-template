@@ -22,9 +22,7 @@ jobs:
           azureSubscription: $(service_connection)
           scriptLocation: inlineScript
           inlineScript: |
-            az ml folder attach \
-            --workspace-name $(workspace_name) \
-            --resource-group $(resource_group_name)
+            az ml folder attach --workspace-name $(workspace_name) --resource-group $(resource_group_name)
 
       - task: AzureCLI@2
         displayName: Generate Run Configuration File
@@ -33,13 +31,17 @@ jobs:
           azureSubscription: $(service_connection)
           scriptLocation: inlineScript
           inlineScript: |
+            # Fail script on error
             set -e
 
+            # Get details of the registered dataset
             DATASET_METADATA=$(az ml dataset show --name $(dataset_name) | jq '.registration')
 
+            # Update details of the registered dataset and compute target to run config file
             jq ".data.InputDataset.dataLocation.dataset |= $DATASET_METADATA" $(train_run_config_file) | jq \
             '.target |= "$(compute_cluster_name)"' > $(generated_run_config_file).runconfig
 
+            # Display details of run config file
             cat $(generated_run_config_file).runconfig
 
       - task: AzureCLI@2
