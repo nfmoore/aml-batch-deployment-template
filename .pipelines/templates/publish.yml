@@ -16,7 +16,6 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            az account show
             pip3 install -r $(dependencies_test)
 
       # - task: DownloadBuildArtifacts@0
@@ -25,6 +24,15 @@ jobs:
       #     source: current
       #     artifactName: model-metadata
       #     downloadPath: $(Pipeline.Workspace)
+
+      - task: AzureCLI@2
+        displayName: Show Account
+        inputs:
+          scriptType: bash
+          azureSubscription: $(service_connection)
+          scriptLocation: inlineScript
+          inlineScript: |
+            az account show
 
       - task: AzureCLI@2
         displayName: Set Subscription ID Variable
