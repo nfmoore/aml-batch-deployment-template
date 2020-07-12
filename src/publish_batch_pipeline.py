@@ -38,6 +38,8 @@ def main():
 
         # Retreive workspace
         print(args.subscription_id, args.resource_group, args.workspace_name)
+        print(os.environ)
+
         workspace = Workspace.get(
             subscription_id=args.subscription_id,
             resource_group=args.resource_group,
