@@ -3,6 +3,7 @@ import os
 from argparse import ArgumentParser
 
 from azureml.core import Datastore, Environment, Workspace
+from azureml.core.authentication import ServicePrincipalAuthentication
 from azureml.core.dataset import Dataset
 from azureml.data.dataset_consumption_config import DatasetConsumptionConfig
 from azureml.pipeline.core import Pipeline, PipelineData, PipelineParameter
@@ -26,6 +27,7 @@ def parse_args():
     ap.add_argument('--pipeline_metadata_file', default=None)
     ap.add_argument('--environment_name', default='score_env')
     ap.add_argument('--ai_connection_string', default='')
+    ap.add_argument('--service_connection', default=None)
 
     args, _ = ap.parse_known_args()
     return args
@@ -36,10 +38,20 @@ def main():
         args = parse_args()
 
         # Retreive workspace
-        workspace = Workspace.get(
-            subscription_id=args.subscription_id,
-            resource_group=args.resource_group,
-            name=args.workspace_name,)
+        if args.service_connection:
+            service_principal = ServicePrincipalAuthentication(
+                tenant_id="my-tenant-id",
+                service_principal_id="my-application-id",
+                service_principal_password="svc_pr_password")
+
+            workspace = Workspace.get(
+                resource_group=args.resource_group,
+                name=args.workspace_name,
+                auth=service_principal)
+        else:
+            workspace = Workspace.get(
+                resource_group=args.resource_group,
+                name=args.workspace_name)
 
         # Retreive compute cluster
         compute_target = workspace.compute_targets[args.compute_name]

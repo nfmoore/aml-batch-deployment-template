@@ -62,7 +62,6 @@ jobs:
           scriptLocation: inlineScript
           inlineScript: |
             python3 src/publish_batch_pipeline.py \
-              --subscription_id $SUBSCRIPTION_ID \
               --resource_group $(resource_group_name) \
               --workspace_name $(workspace_name) \
               --compute_name $(compute_name) \
