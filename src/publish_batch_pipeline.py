@@ -14,7 +14,7 @@ def parse_args():
     # Parse command line arguments
     ap = ArgumentParser()
 
-    # ap.add_argument('--subscription_id', required=True)
+    ap.add_argument('--subscription_id', required=True)
     ap.add_argument('--resource_group', required=True)
     ap.add_argument('--workspace_name', required=True)
     ap.add_argument('--compute_name', required=True)
@@ -38,18 +38,9 @@ def main():
         args = parse_args()
 
         # Retreive workspace
-        # if args.service_connection:
-        #     service_principal = ServicePrincipalAuthentication(
-        #         tenant_id="my-tenant-id",
-        #         service_principal_id="my-application-id",
-        #         service_principal_password="svc_pr_password")
-
-        #     workspace = Workspace.get(
-        #         resource_group=args.resource_group,
-        #         name=args.workspace_name,
-        #         auth=service_principal)
-        # else:
+        print(args.subscription_id, args.resource_group, args.workspace_name)
         workspace = Workspace.get(
+            subscription_id=args.subscription_id,
             resource_group=args.resource_group,
             name=args.workspace_name)
 
