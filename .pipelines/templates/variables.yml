@@ -57,6 +57,3 @@ variables:
   # SCHEDULE
   - name: schedule_datastore_name
     value: batch_score
-
-  - name: schedule_path_on_datastore
-    value: inputs

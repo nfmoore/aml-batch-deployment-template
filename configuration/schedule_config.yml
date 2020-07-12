@@ -9,4 +9,4 @@ Schedule:
   polling_interval: 5
   data_path_parameter_name: ""
   continue_on_step_failure: None
-  path_on_datastore: "inputs"
+  path_on_datastore: ""
