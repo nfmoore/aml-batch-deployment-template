@@ -18,10 +18,9 @@ stages:
   - stage: model_build
     displayName: Model Build
     jobs:
-      # - template: ./templates/code-quality.yml
-      # - template: ./templates/train.yml
-      # - template: ./templates/register.yml
-      - template: ./templates/publish.yml
+      - template: ./templates/code-quality.yml
+      - template: ./templates/train.yml
+      - template: ./templates/register.yml
 
   - stage: deploy_production
     displayName: Production Deployment

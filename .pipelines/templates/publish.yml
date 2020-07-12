@@ -18,12 +18,12 @@ jobs:
           script: |
             pip3 install -r $(dependencies_test)
 
-      # - task: DownloadBuildArtifacts@0
-      #   displayName: Download Model Metadata Artifact
-      #   inputs:
-      #     source: current
-      #     artifactName: model-metadata
-      #     downloadPath: $(Pipeline.Workspace)
+      - task: DownloadBuildArtifacts@0
+        displayName: Download Model Metadata Artifact
+        inputs:
+          source: current
+          artifactName: model-metadata
+          downloadPath: $(Pipeline.Workspace)
 
       - task: AzureCLI@2
         displayName: Publish Pipeline to Workspace
@@ -34,13 +34,13 @@ jobs:
           inlineScript: |
             export SUBSCRIPTION_ID=$(az account show | jq ".id" --raw-output)
 
-            # export MODEL_ID=$(cat $(Pipeline.Workspace)/model-metadata/model.json | jq ".modelId" --raw-output)
+            export MODEL_ID=$(cat $(Pipeline.Workspace)/model-metadata/model.json | jq ".modelId" --raw-output)
 
             export APPLICATION_INSIGHTS_CONNECTION_STRING=$(az resource show \
             --resource-group $(resource_group_name) \
             --name $(application_insights_name) \
             --resource-type Microsoft.Insights/components \
-            --query properties.ConnectionString)
+            | jq ".properties.ConnectionString" --raw-output)
 
             python3 src/publish_batch_pipeline.py \
             --subscription_id $SUBSCRIPTION_ID \
@@ -48,13 +48,13 @@ jobs:
             --workspace_name $(workspace_name) \
             --compute_name $(compute_name) \
             --environment_specification $(dependencies_score) \
-            --model_id MODEL_ID \
+            --model_id $MODEL_ID \
             --pipeline_name $(pipeline_endpoint_name) \
             --pipeline_version $(Build.BuildId) \
             --input_dataset_name $(input_dataset_name) \
             --output_datastore_name $(output_datastore_name) \
             --ai_connection_string $APPLICATION_INSIGHTS_CONNECTION_STRING \
-            --pipeline_metadata_file $(Pipeline.Workspace)/pipeline-metadata/pipeline.json
+            --pipeline_metadata_file $(Pipeline.Workspace)/pipeline.json
 
       - task: PublishBuildArtifacts@1
         displayName: Publish Pipeline Metadata Artifact
