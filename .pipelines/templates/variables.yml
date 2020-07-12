@@ -45,9 +45,6 @@ variables:
     value: environments/dependencies_test.txt
 
   # PUBLISH / SCHEDULE
-  - name: pipeline_endpoint_name
-    value: cardiovascular-disease-batch-score
-
   - name: input_dataset_name
     value: cardiovascular_disease_batch_score
 
@@ -59,3 +56,6 @@ variables:
 
   - name: schedule_path_on_datastore
     value: cardiovascular_disease
+
+  - name: pipeline_endpoint_name
+    value: cardiovascular-disease-batch-score
