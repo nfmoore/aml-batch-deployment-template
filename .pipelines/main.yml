@@ -15,19 +15,19 @@ trigger:
       - README.md
 
 stages:
-  - stage: model_build
-    displayName: Model Build
-    jobs:
-      - template: ./templates/code-quality.yml
-      - template: ./templates/train.yml
-      - template: ./templates/register.yml
+  # - stage: model_build
+  #   displayName: Model Build
+  #   jobs:
+  #     - template: ./templates/code-quality.yml
+  #     - template: ./templates/train.yml
+  #     - template: ./templates/register.yml
 
   - stage: deploy_production
     displayName: Production Deployment
-    dependsOn: model_build
+    # dependsOn: model_build
     jobs:
       - deployment: Approval
         displayName: Production Deployment Approval
         environment: Production
-      - template: ./templates/publish.yml
+      # - template: ./templates/publish.yml
       - template: ./templates/schedule.yml

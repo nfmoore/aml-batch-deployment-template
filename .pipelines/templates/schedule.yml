@@ -22,7 +22,7 @@ jobs:
           script: |
             sudo apt update
             sudo apt install snapd
-            snap install yq
+            sudo snap install yq
 
       - task: DownloadBuildArtifacts@0
         displayName: Download Model Metadata Artifact
