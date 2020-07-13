@@ -1,0 +1,64 @@
+jobs:
+  - job: train_model
+    displayName: Train Model
+    dependsOn: code_quality
+
+    variables:
+      - template: ./variables.yml
+
+    steps:
+      - task: AzureCLI@2
+        displayName: Install Azure ML CLI
+        inputs:
+          scriptType: bash
+          azureSubscription: $(service_connection)
+          scriptLocation: inlineScript
+          inlineScript: az extension add -n azure-cli-ml
+
+      - task: AzureCLI@2
+        displayName: Attach Workspace
+        inputs:
+          scriptType: bash
+          azureSubscription: $(service_connection)
+          scriptLocation: inlineScript
+          inlineScript: |
+            az ml folder attach --workspace-name $(workspace_name) --resource-group $(resource_group_name)
+
+      - task: AzureCLI@2
+        displayName: Generate Run Configuration File
+        inputs:
+          scriptType: bash
+          azureSubscription: $(service_connection)
+          scriptLocation: inlineScript
+          inlineScript: |
+            # Fail script on error
+            set -e
+
+            # Get details of the registered dataset
+            DATASET_METADATA=$(az ml dataset show --name $(dataset_name) | jq '.registration')
+
+            # Update details of the registered dataset and compute target to run config file
+            jq ".data.InputDataset.dataLocation.dataset |= $DATASET_METADATA" $(train_run_config_file) | jq \
+            '.target |= "$(compute_cluster_name)"' > $(generated_run_config_file).runconfig
+
+            # Display details of run config file
+            cat $(generated_run_config_file).runconfig
+
+      - task: AzureCLI@2
+        displayName: "Train Model"
+        inputs:
+          scriptType: bash
+          azureSubscription: $(service_connection)
+          scriptLocation: inlineScript
+          inlineScript: |
+            az ml run submit-script \
+            --experiment-name $(project_name)-experiment \
+            --source-directory $(source_directory) \
+            --run-configuration-name $(generated_run_config_file) \
+            --output-metadata-file run.json train.py
+
+      - task: PublishBuildArtifacts@1
+        displayName: Publish Run Metadata Artifact
+        inputs:
+          pathToPublish: $(System.DefaultWorkingDirectory)/run.json
+          artifactName: run-metadata

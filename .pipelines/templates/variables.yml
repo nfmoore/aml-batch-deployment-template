@@ -1,0 +1,61 @@
+variables:
+  # COMMON
+  - group: aml-deployment-templates
+
+  - name: resource_group_name
+    value: $(environment)-$(namespace)-rg
+
+  - name: workspace_name
+    value: mlw$(environment)$(namespace)
+
+  - name: application_insights_name
+    value: ai$(environment)$(namespace)
+
+  - name: project_name
+    value: cardiovascular-disease
+
+  - name: source_directory
+    value: src
+
+  - name: compute_name
+    value: cpu-cluster
+
+  # TRAIN
+  - name: dataset_name
+    value: cardiovascular_disease_dataset
+
+  - name: train_run_config_file
+    value: configuration/train.runconfig
+
+  - name: generated_run_config_file
+    value: configuration/train_generated
+
+  # CONFIG
+  - name: schedule_config
+    value: configuration/schedule_config.yml
+
+  - name: generated_schedule_config
+    value: configuration/generated_schedule_config.yml
+
+  # ENVIRONMENTS
+  - name: dependencies_score
+    value: environments/conda_dependencies_score.yml
+
+  - name: dependencies_test
+    value: environments/dependencies_test.txt
+
+  # PUBLISH / SCHEDULE
+  - name: input_dataset_name
+    value: cardiovascular_disease_batch_score
+
+  - name: output_datastore_name
+    value: batch_score_output
+
+  - name: schedule_datastore_name
+    value: batch_score_input
+
+  - name: schedule_path_on_datastore
+    value: cardiovascular_disease
+
+  - name: pipeline_endpoint_name
+    value: cardiovascular-disease-batch-score
