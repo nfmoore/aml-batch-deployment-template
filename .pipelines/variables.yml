@@ -1,0 +1,56 @@
+variables:
+  # COMMON
+  - name: source_directory
+    value: src
+
+  - name: unit_test_directory
+    value: tests/unit
+
+  - name: compute_cluster_name
+    value: cpu-cluster
+
+  # ENVIRONMENTS
+  - name: dependencies_score
+    value: environments/score_dependencies.yml
+
+  - name: dependencies_train
+    value: environments/train_dependencies.yml
+
+  - name: dependencies_ci
+    value: environments/ci_dependencies.yml
+
+  # MODEL
+  - name: model_name
+    value: cardiovascular-disease-model
+
+  - name: model_metadata_artifact
+    value: model-metadata
+
+  # TRAIN
+  - name: dataset_name
+    value: cardiovascular_disease_dataset
+
+  - name: train_experiment_name
+    value: cardiovascular-disease-train-experiment
+
+  - name: train_pipeline_metadata_artifact
+    value: train-pipeline-metadata
+
+  - name: train_pipeline_endpoint_name
+    value: cardiovascular-disease-train
+
+  # SCORE
+  - name: input_datastore_name
+    value: batch_score
+
+  - name: output_datastore_name
+    value: batch_score
+
+  - name: score_experiment_name
+    value: cardiovascular-disease-score-experiment
+
+  - name: score_pipeline_metadata_artifact
+    value: score-pipeline-metadata
+
+  - name: score_pipeline_endpoint_name
+    value: cardiovascular-disease-batch-score

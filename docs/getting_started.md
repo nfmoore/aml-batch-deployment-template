@@ -33,8 +33,6 @@
 
       | Variable Name          | Suggested Value            |
       | ---------------------- | -------------------------- |
-      | `aks_cluster_name`     | `aks-cluster`              |
-      | `aml_sku`              | `enterprise`               |
       | `compute_cluster_name` | `cpu-cluster`              |
       | `environment`          | `development`              |
       | `location`             | `australiaeast`            |
@@ -50,12 +48,8 @@ See [these](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/vari
 
    1. Creating an Azure Machine Learning Workspace.
    2. Creating a compute cluster with the same name as the `compute_cluster_name` variable in the variable group in Azure DevOps.
-   3. Creating an inference cluster with the same name as the `aks_cluster_name` variable in the variable group in Azure DevOps. This will create an AKS cluster in your resource group.
-   4. Registering a tabular dataset with the name `cardiovascular_disease_dataset` using the [Cardiovascular Disease dataset](https://www.kaggle.com/sulianova/cardiovascular-disease-dataset) (which has been adapted from Kaggle) and is available [here](https://github.com/nfmoore/aml-platform-deployment-template/blob/master/data/cardiovascular-disease.csv).
-   5. Creating two containers in the Azure Blob Storage account created when the Azure Machine Learning Workspace was provisioned. Name these containers `batch-score-input` and `batch-score-output`. If you choose different names ensure you edit the corresponding variables in [`variables.yml`](../.pipelines/templates/variables.yml).
-   6. Create two datastores called `batch_score_input` and `batch_score_output` which reference the corresponding containers created in step 5. If you choose different names ensure you edit the corresponding variables in [`variables.yml`](../.pipelines/templates/variables.yml).
-   7. Create a directory called `cardiovascular_disease` inside the container `batch-score-input` created in step 5. If you choose different names ensure you edit the corresponding variables in [`variables.yml`](../.pipelines/templates/variables.yml).
-   8. Create a file dataset called `cardiovascular_disease_batch_score`. Set the datastore to `batch_score_input` and set the relative path to `cardiovascular_disease/**`. If you choose different names ensure you edit the corresponding variables in [`variables.yml`](../.pipelines/templates/variables.yml).
+   3. Registering a tabular dataset with the name `cardiovascular_disease_dataset` using the [Cardiovascular Disease dataset](https://www.kaggle.com/sulianova/cardiovascular-disease-dataset) (which has been adapted from Kaggle) and is available [here](https://github.com/nfmoore/aml-platform-deployment-template/blob/master/data/cardiovascular-disease.csv).
+   4. Creating a container in the Azure Blob Storage account created when the Azure Machine Learning Workspace was provisioned. Name this container `batch-score`. If you choose different names ensure you edit the corresponding variables in [`variables.yml`](../.pipelines/templates/variables.yml). Files that you want to be scored can be placed in this container. When triggering the pipleine you will specify this datastore and specifiy the directory where the data resides for scoring and the directory to write the data.
 
    The above steps assume you have `Contributor` or `Owner` access to the subscription or resource group.
 
@@ -74,7 +68,3 @@ See [these](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/vari
    7. Select `Run` from the top-right of the protal to execute the pipeline and deploy the platform.
 
    See [these](https://docs.microsoft.com/en-us/azure/devops/pipelines/create-first-pipeline) instructions for more details about creating a pipeline in Azure DevOps.
-
-### 5. Trigger batch scoring
-
-- When you want to trigger batch scoring place your files (all in CSV format) inside the `cardiovascular_disease` directory in the `batch-score-input` container of the Azure Blob Storage account. This should trigger the change based schedule in AML. To confirm the trigger has executed check your `Pipeline Runs` in the `Pipelines` section of the Azure Machine Learning Workspace. The `Status` should be `Running` and the `Description` should be `Change-Based Schedule`. The results / predictions will be in a file called `predictions.txt` in a directory called `azureml/<aml-experiment-run-id>/cardiovascular_disease_batch_score` inside the `batch-score-output` container of the Azure Blob Storage account.

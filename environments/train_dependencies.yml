@@ -1,4 +1,4 @@
-name: score_env
+name: train_env
 
 channels:
   - defaults
@@ -8,11 +8,11 @@ dependencies:
   - python=3.7
   - pandas=1.0.*
   - numpy=1.18.*
+  - scipy=1.4.*
   - scikit-learn=0.22.*
   - joblib=0.14.*
   - pip=20.0.*
   - pip:
-      - azureml-sdk==1.6.*
-      - azureml-defaults==1.6.*
-      - azureml-pipeline-steps==1.6.*
+      - azureml-sdk==1.8.*
+      - azureml-dataprep[pandas, fuse]==1.8.*
       - opencensus-ext-azure==1.0.*
