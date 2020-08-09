@@ -102,6 +102,10 @@ def score_data(input_file_path):
 
     # Define numeric features
     numeric_features = ["age", "systolic", "diastolic", "bmi"]
+    raw_numeric_features = ["age", "systolic", "diastolic", "height", "weight"]
+
+    # Filter dataframe for columns of interest
+    df = df[categorical_features + raw_numeric_features]
 
     # Create feature for Body Mass Index (indicator of heart health)
     df["bmi"] = df.weight / (df.height / 100) ** 2
