@@ -14,7 +14,7 @@ jobs:
       - name: integration_test_script
         value: tests.integration.score_pipeline_test
       - name: pipeline_metadata_file_path
-        value: $(Build.SourcesDirectory)/${{ parameters.pipeline_artifact_name }}/pipeline.json
+        value: $(System.ArtifactsDirectory)/${{ parameters.pipeline_artifact_name }}/pipeline.json
 
     steps:
       - task: CmdLine@2
@@ -36,6 +36,9 @@ jobs:
           scriptType: bash
           scriptLocation: inlineScript
           inlineScript: |
+            # Fail on error
+            set -e
+
             # Get subscription id
             SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 
@@ -49,6 +52,9 @@ jobs:
           scriptType: bash
           scriptLocation: inlineScript
           inlineScript: |
+            # Fail on error
+            set -e
+
             # Get subscription id
             PIPELINE_NAME=$(cat $(pipeline_metadata_file_path) | jq ".name" --raw-output)
 

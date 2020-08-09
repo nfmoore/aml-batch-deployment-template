@@ -19,7 +19,7 @@ jobs:
       - name: pipeline_script
         value: src.${{ parameters.pipeline_type }}.${{ parameters.pipeline_type }}_pipeline
       - name: pipeline_metadata_file_path
-        value: $(Build.SourcesDirectory)/${{ parameters.pipeline_artifact_name }}/pipeline.json
+        value: $(System.ArtifactsDirectory)/${{ parameters.pipeline_artifact_name }}/pipeline.json
 
     steps:
       - task: CmdLine@2
