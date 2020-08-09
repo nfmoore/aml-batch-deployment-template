@@ -38,7 +38,7 @@ jobs:
         inputs:
           script: |
             source activate ci_env
-            python3 -m pytest $(unit_test_directory) --cov $(source_directory) --cov-report xml --junitxml $(unit_test_results)
+            python3 -m pytest $(unit_test_directory) --cov $(source_directory) --cov-report xml --junitxml $(unit_test_result_files)
 
       - task: PublishTestResults@2
         displayName: Publish unit test results
