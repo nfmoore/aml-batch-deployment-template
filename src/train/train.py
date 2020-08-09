@@ -94,7 +94,9 @@ def train_model(df):
 
     # Get model features / target
     X = df.drop(
-        labels=["height", "weight", "cardiovascular_disease", "datetime"], axis=1
+        labels=["height", "weight", "cardiovascular_disease", "datetime"],
+        axis=1,
+        errors="ignore",
     )
     y = df.cardiovascular_disease
 
