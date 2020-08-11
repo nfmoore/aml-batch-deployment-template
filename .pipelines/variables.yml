@@ -28,7 +28,7 @@ variables:
 
   # TRAIN
   - name: dataset_name
-    value: cardiovascular_disease_dataset
+    value: cardiovascular_disease_train_dataset
 
   - name: train_experiment_name
     value: cardiovascular-disease-train-experiment
