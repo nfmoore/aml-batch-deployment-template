@@ -6,7 +6,7 @@ Machine Learning Operations (MLOps) is based on DevOps principles and practices 
 
 ![ML lifecycle](/docs/images/ml-lifecycle.png)
 
-This deployment template uses [Azure Machine Learning](https://docs.microsoft.com/en-us/azure/machine-learning/overview-what-is-azure-ml) and [Azure Pipelines](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines) (part of Azure DevOps). The template contains code and DevOps pipeline definitions to automated end-to-end deployment of machine learning models as an [AML Pipeline](https://docs.microsoft.com/en-us/azure/machine-learning/concept-ml-pipelines) for batch scoring / inferencing using MLOps principles and practices. The template includes: unit tests and code coverage, model training and registration, controlled deployments (via approvals), model monitoring and an AML pipeline for batch scoring scenarios.
+This deployment template uses [Azure Machine Learning](https://docs.microsoft.com/en-us/azure/machine-learning/overview-what-is-azure-ml) and [Azure Pipelines](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines) (part of Azure DevOps). The template contains code and DevOps pipeline definitions to automated end-to-end deployment of machine learning models as an [AML Pipeline](https://docs.microsoft.com/en-us/azure/machine-learning/concept-ml-pipelines) for batch scoring / inferencing using MLOps principles and practices. The template includes: unit / integration tests and code coverage, model training and registration, controlled deployments (via approvals), model monitoring and an AML pipeline for batch scoring scenarios.
 
 ## Prerequisites
 
